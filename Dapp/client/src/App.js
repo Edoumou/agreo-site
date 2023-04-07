@@ -3,7 +3,7 @@ import SChain from "./contracts/SChain.json";
 //import SChainData from "./contracts/SChainData.json";
 import getWeb3 from "./getWeb3";
 import 'semantic-ui-css/semantic.min.css';
-import { Input, Button, Grid, GridRow, GridColumn, Header, Table, TableRow, TableCell, TableBody } from "semantic-ui-react";
+import { Input, Button, Grid, GridRow, GridColumn, Header, Table, TableRow, TableCell, TableBody, TableHeader, TableHeaderCell } from "semantic-ui-react";
 import "./App.css";
 
 class App extends Component {
@@ -11,6 +11,7 @@ class App extends Component {
     storageValue: 0,
     web3: null,
     account: null,
+    chain: [],
     formatedAccount: null,
     contract: null,
     partner: '',
@@ -114,6 +115,8 @@ class App extends Component {
     ).call({ from: account });
 
     console.log("chain:", chain);
+
+    this.setState({ chain });
   };
 
   getAccount = async () => {
@@ -291,7 +294,10 @@ class App extends Component {
   }
 
   render() {
-    const { formatedAccount, userCategory, partner } = this.state;
+    const { chain, formatedAccount, userCategory, partner } = this.state;
+    const nb = chain.length;
+    const partners = ["Farmer", "Transporter", "Distributor", "Retailer"];
+
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
@@ -419,6 +425,41 @@ class App extends Component {
                           </TableRow>
                         </TableBody>
                       </Table>
+                      <div style={{marginTop: 70}}>
+                        {
+                          nb !== 0 ?
+                            <div>
+                              <Header as='h1'>Product</Header>
+                              <Table definition>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHeaderCell />
+                                    <TableHeaderCell>name</TableHeaderCell>
+                                    <TableHeaderCell>category</TableHeaderCell>
+                                    <TableHeaderCell>Type</TableHeaderCell>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {
+                                    chain.map((res, index, arr) =>
+                                      <TableRow key={index}>
+                                        <TableCell>{partners[index]}</TableCell>
+                                        <TableCell>{chain[index].productName}</TableCell>
+                                        <TableCell>{chain[index].productCategory}</TableCell>
+                                        <TableCell>{chain[index].productType}</TableCell>
+                                      </TableRow>
+                                    )
+                                  }
+                                </TableBody>
+                              </Table>
+                            </div>
+                          :
+                            console.log("")
+                        }
+                        <Table definition>
+
+                        </Table>
+                      </div>
                     </GridColumn>
                   </GridRow>
                 </Grid>
