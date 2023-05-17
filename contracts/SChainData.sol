@@ -4,23 +4,26 @@ pragma solidity 0.8.19;
 import "./ISChain.sol";
 
 contract SChainData is ISChain {
-    mapping(string => Chain) chains;
+    // defines a product whithin a chain: key1: chainId, key2: productId
+    mapping(string => mapping(string => Product)) products;
     mapping(address => SCPartner) public partners;
+    mapping(string => bool)  _isChain;
+    mapping(string => string[]) public chainProductIds;
+    mapping(string => Product[]) public chains;
 
     mapping(address => FarmerIds) farmerIds;
     mapping(address => TransporterIds) transporterIds;
     mapping(address => DistributorIds) distributorIds;
     mapping(address => RetailerIds) retailerIds;
 
-    mapping(string => string[]) chainProductIds;
-
-    uint256 numberOfChains;
+    uint256 public numberOfChains;
 
     address[] public farmers;
     address[] public transporters;
     address[] public distributors;
     address[] public retailers;
-    address[] public restaurants;
+
+    string[] public listOfChainIds;
 
     uint256 partnerCount;
 
@@ -55,31 +58,28 @@ contract SChainData is ISChain {
         return  partners[_partnerAddress].isPartner;
     }
 
+    function getProductIds(string memory _chainID) public view returns(string[] memory) {
+        return chainProductIds[_chainID];
+    }
+
+    function getChainIds() public view returns(string[] memory) {
+        return listOfChainIds;
+    }
+
     function isChain(string memory _chainId) public view returns(bool) {
-        return chains[_chainId].isChain;
+        return _isChain[_chainId];
     }
 
-    function getChain(string memory _chainId) public view returns(Chain memory) {
-        return chains[_chainId];
+    function getProduct(
+        string memory _chainID,
+        string memory _productID
+    ) public view returns(Product memory) {
+        return products[_chainID][_productID];
     }
 
-    function getProductIds(string memory _chainId) public view returns(string[] memory) {
-        return chainProductIds[_chainId];
-    }
-
-    function getFarmerIds(address _farmer) public view returns(string[] memory, string[] memory) {
-        return (farmerIds[_farmer].chainIds, farmerIds[_farmer].productIds);
-    }
-
-    function getTranspoterIds(address _transporter) public view returns(string[] memory, string[] memory) {
-        return (transporterIds[_transporter].chainIds, transporterIds[_transporter].productIds);
-    }
-
-    function getDistributorIds(address _distributor) public view returns(string[] memory, string[] memory) {
-        return (distributorIds[_distributor].chainIds, distributorIds[_distributor].productIds);
-    }
-
-    function getRetailerIds(address _retailer) public view returns(string[] memory, string[] memory) {
-        return (retailerIds[_retailer].chainIds, retailerIds[_retailer].productIds);
+    function getChain(
+        string memory _chainID
+    ) public view returns(Product[] memory chain) {
+        return chains[_chainID];
     }
 }

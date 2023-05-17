@@ -10,7 +10,7 @@ contract SChain is SChainData {
         string memory _location,
         string memory _url,
         string memory _email,
-        uint256 _phoneNumber
+        string memory _phoneNumber
     ) public {
         partnerCount++;
         partners[msg.sender].id = partnerCount;
@@ -44,7 +44,7 @@ contract SChain is SChainData {
     function productRegistration(
         string memory _chainID,
         string memory _productID,
-        FarmerProduct memory _farmerProduct
+        Product memory _product
     ) public onlyFarmer {
         require(!isChain(_chainID), "Chain already exists");
         require(
@@ -52,30 +52,23 @@ contract SChain is SChainData {
             "ChainID must be different to ProductID"
         );
 
-        chains[_chainID].farmerId = _farmerProduct.id;
-        chains[_chainID].farmerName = _farmerProduct.name;
-        chains[_chainID].farmerCategory = _farmerProduct.category;
-        chains[_chainID].farmerType = _farmerProduct._type;
-        chains[_chainID].farmerHarvestingTime = _farmerProduct.harvestingTime;
-        chains[_chainID].farmerPackagingTime = _farmerProduct.packagingTime;
-        chains[_chainID].farmerDepartureTime = _farmerProduct.departureTime;
-        chains[_chainID].farmer = _farmerProduct.farmer;
-        chains[_chainID].farmerTransporter = _farmerProduct.transporter;
-        chains[_chainID].farmerReceiver = _farmerProduct.receiver;
-        chains[_chainID].isChain = true;
+        _isChain[_chainID] = true;
+        products[_chainID][_productID] = _product;
 
         uint256 _numberOfChains = numberOfChains;
         numberOfChains = _numberOfChains + 1;
+        listOfChainIds.push(_chainID);
         farmerIds[msg.sender].chainIds.push(_chainID);
         farmerIds[msg.sender].productIds.push(_productID);
         chainProductIds[_chainID].push(_productID);
+        chains[_chainID].push(_product);
 
-        address farmer = chains[_chainID].farmer;
-        address transporter = chains[_chainID].farmerTransporter;
-        address receiver = chains[_chainID].farmerReceiver;
-        uint256 harvestingTime = chains[_chainID].farmerHarvestingTime;
-        uint256 packagingTime = chains[_chainID].farmerPackagingTime;
-        uint256 departureTime = chains[_chainID].farmerDepartureTime;
+        address farmer = products[_chainID][_productID].stakeholderAddress;
+        address receiver = products[_chainID][_productID].receiverAddress;
+        address transporter = products[_chainID][_productID].transporterAddress;
+        uint256 harvestingTime = products[_chainID][_productID].harvestingTime;
+        uint256 packagingTime = products[_chainID][_productID].packagingTime;
+        uint256 departureTime = products[_chainID][_productID].departureTime;
 
         require(farmer == msg.sender && isPartner(farmer), "invalid farmer address");
         require(isPartner(transporter), "invalid transporter address");
@@ -91,7 +84,7 @@ contract SChain is SChainData {
     function ProductTransportation(
         string memory _chainID,
         string memory _productID,
-        TransporterProduct memory _transporterProduct
+        Product memory _product
     ) public onlyTransporter {
         require(isChain(_chainID), "Chain doesn't exists");
         require(
@@ -99,24 +92,17 @@ contract SChain is SChainData {
             "ChainID must be different to ProductID"
         );
 
-        chains[_chainID].transporterId = _transporterProduct.id;
-        chains[_chainID].transporterParentId = _transporterProduct.parentId;
-        chains[_chainID].transporterName = _transporterProduct.name;
-        chains[_chainID].transporterCategory = _transporterProduct.category;
-        chains[_chainID].transporterType = _transporterProduct._type;
-        chains[_chainID].transporterReceivingTime = _transporterProduct.receivingTime;
-        chains[_chainID].transporterDepartureTime = _transporterProduct.departureTime;
-        chains[_chainID].transporter = _transporterProduct.transporter;
-        chains[_chainID].transporterReceiver = _transporterProduct.receiver;
+        products[_chainID][_productID] = _product;
 
         transporterIds[msg.sender].chainIds.push(_chainID);
         transporterIds[msg.sender].productIds.push(_productID);
         chainProductIds[_chainID].push(_productID);
+        chains[_chainID].push(_product);
 
-        address transporter = chains[_chainID].transporter;
-        address receiver = chains[_chainID].transporterReceiver;
-        uint256 receivingTime = chains[_chainID].transporterReceivingTime;
-        uint256 departureTime = chains[_chainID].transporterDepartureTime;
+        address transporter = products[_chainID][_productID].stakeholderAddress;
+        address receiver = products[_chainID][_productID].receiverAddress;
+        uint256 departureTime = products[_chainID][_productID].departureTime;
+        uint256 receivingTime = products[_chainID][_productID].receivingTime;
 
         require(transporter == msg.sender && isPartner(transporter), "invalid transporter address");
         require(isPartner(receiver), "invalid receiver address");
@@ -131,7 +117,7 @@ contract SChain is SChainData {
     function productDistribution(
         string memory _chainID,
         string memory _productID,
-        DistributorProduct memory _distributorProduct 
+        Product memory _product 
     ) public onlyDistributor {
         require(isChain(_chainID), "Chain doesn't exists");
         require(
@@ -139,24 +125,17 @@ contract SChain is SChainData {
             "ChainID must be different to ProductID"
         );
 
-        chains[_chainID].distributorId = _distributorProduct.id;
-        chains[_chainID].distributorParentId = _distributorProduct.parentId;
-        chains[_chainID].distributorName = _distributorProduct.name;
-        chains[_chainID].distributorCategory = _distributorProduct.category;
-        chains[_chainID].distributorType = _distributorProduct._type;
-        chains[_chainID].distributorReceivingTime = _distributorProduct.receivingTime;
-        chains[_chainID].distributorDepartureTime = _distributorProduct.departureTime;
-        chains[_chainID].distributor = _distributorProduct.distributor;
-        chains[_chainID].distributorReceiver = _distributorProduct.receiver;
+        products[_chainID][_productID] = _product;
 
         distributorIds[msg.sender].chainIds.push(_chainID);
         distributorIds[msg.sender].productIds.push(_productID);
         chainProductIds[_chainID].push(_productID);
+        chains[_chainID].push(_product);
 
-        address distributor = chains[_chainID].distributor;
-        address receiver = chains[_chainID].distributorReceiver;
-        uint256 receivingTime = chains[_chainID].distributorReceivingTime;
-        uint256 departureTime = chains[_chainID].distributorDepartureTime;
+        address distributor = products[_chainID][_productID].stakeholderAddress;
+        address receiver = products[_chainID][_productID].receiverAddress;
+        uint256 departureTime = products[_chainID][_productID].departureTime;
+        uint256 receivingTime = products[_chainID][_productID].receivingTime;
 
         require(distributor == msg.sender && isPartner(distributor), "invalid distributor address");
         require(isPartner(receiver), "invalid receiver address");
@@ -171,7 +150,7 @@ contract SChain is SChainData {
     function ReailerProduct(
         string memory _chainID,
         string memory _productID,
-        RetailerProduct memory _retailerProduct 
+        Product memory _product 
     ) public onlyRetailer {
         require(isChain(_chainID), "Chain doesn't exists");
         require(
@@ -179,22 +158,16 @@ contract SChain is SChainData {
             "ChainID must be different to ProductID"
         );
 
-        chains[_chainID].retailerId = _retailerProduct.id;
-        chains[_chainID].retailerParentId = _retailerProduct.parentId;
-        chains[_chainID].retailerName = _retailerProduct.name;
-        chains[_chainID].retailerCategory = _retailerProduct.category;
-        chains[_chainID].retailerType = _retailerProduct._type;
-        chains[_chainID].retailerReceivingTime = _retailerProduct.receivingTime;
-        chains[_chainID].retailerCookedTime = _retailerProduct.cookedTime;
-        chains[_chainID].retailer = _retailerProduct.retailer;
+        products[_chainID][_productID] = _product;
 
         retailerIds[msg.sender].chainIds.push(_chainID);
         retailerIds[msg.sender].productIds.push(_productID);
         chainProductIds[_chainID].push(_productID);
+        chains[_chainID].push(_product);
 
-        address retailer = chains[_chainID].retailer;
-        uint256 receivingTime = chains[_chainID].retailerReceivingTime;
-        uint256 cookedTime = chains[_chainID].retailerCookedTime;
+        address retailer = products[_chainID][_productID].stakeholderAddress;
+        uint256 receivingTime = products[_chainID][_productID].receivingTime;
+        uint256 cookedTime = products[_chainID][_productID].cookedTime;
 
         require(retailer == msg.sender && isPartner(retailer), "invalid retailer address");
         require(
