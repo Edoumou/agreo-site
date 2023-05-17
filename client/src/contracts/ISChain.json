@@ -10,7 +10,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity 0.8.19;\n\ninterface ISChain {\n    struct Product {\n        string productCategory;\n        string productType;\n        string productVariety;\n        uint256 harvestingTime;\n        uint256 packagingTime;\n        uint256 departureTime;\n        uint256 receivingTime;\n        uint256 cookedTime;\n        address stakeholderAddress;\n        address transporterAddress;\n        address receiverAddress;\n    }\n\n    /**\n    * struct that defines a partner in the supply chain\n    * a partner can be one of the following\n    * 1: Farmer \n    * 2: Transporter\n    * 3: Distributor\n    * 4: Retailer\n    */\n    struct SCPartner {\n        uint256 id;\n        uint256 categoryId;\n        string category;\n        string name;\n        string location;\n        string url;\n        string email;\n        string phoneNumber;\n        address partnerAddress;\n        bool isPartner;\n    }\n\n    struct FarmerIds {\n        string[] chainIds;\n        string[] productIds;\n    }\n\n    struct TransporterIds {\n        string[] chainIds;\n        string[] productIds;\n    }\n\n    struct DistributorIds {\n        string[] chainIds;\n        string[] productIds;\n    }\n\n    struct RetailerIds {\n        string[] chainIds;\n        string[] productIds;\n    }\n}",
-  "sourcePath": "/Users/sam/Documents/Projects/AGREO/agreo/Dapp/contracts/ISChain.sol",
+  "sourcePath": "/Users/sam/Documents/Projects/AGREO/agreo/contracts/ISChain.sol",
   "ast": {
     "absolutePath": "project:/contracts/ISChain.sol",
     "exportedSymbols": {
@@ -992,7 +992,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.9",
-  "updatedAt": "2023-05-11T16:43:42.517Z",
+  "updatedAt": "2023-05-17T15:12:48.360Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},
