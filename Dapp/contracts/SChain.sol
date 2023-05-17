@@ -10,7 +10,7 @@ contract SChain is SChainData {
         string memory _location,
         string memory _url,
         string memory _email,
-        uint256 _phoneNumber
+        string memory _phoneNumber
     ) public {
         partnerCount++;
         partners[msg.sender].id = partnerCount;

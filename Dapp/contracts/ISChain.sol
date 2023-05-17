@@ -3,9 +3,9 @@ pragma solidity 0.8.19;
 
 interface ISChain {
     struct Product {
-        string productName;
-        string productType;
         string productCategory;
+        string productType;
+        string productVariety;
         uint256 harvestingTime;
         uint256 packagingTime;
         uint256 departureTime;
@@ -32,7 +32,7 @@ interface ISChain {
         string location;
         string url;
         string email;
-        uint256 phoneNumber;
+        string phoneNumber;
         address partnerAddress;
         bool isPartner;
     }
